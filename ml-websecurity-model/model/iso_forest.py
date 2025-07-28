@@ -39,12 +39,12 @@ X_test_scaled  = X_test
 
 X_hyper = np.vstack([X_train_scaled, X_val_scaled])
 
-y_hyper = np.concatenate([np.zeros(len(X_train_scaled), dtype=int),    
+y_hyper = np.concatenate([np.zeros(len(X_train_scaled), dtype = int),    
                         (y_val == -1).astype(int)
                         ])
 
-test_fold = np.concatenate([-1 * np.ones(len(X_train_scaled), dtype=int), 
-                            0 * np.ones(len(X_val_scaled),   dtype=int)   
+test_fold = np.concatenate([-1 * np.ones(len(X_train_scaled), dtype = int), 
+                            0 * np.ones(len(X_val_scaled), dtype = int)   
                             ])
 ps = PredefinedSplit(test_fold)
 
@@ -54,25 +54,25 @@ param_grid = {
     'max_samples':   [128, 256, 'auto'],
     'contamination': [0.03, 0.06, 0.10, 0.15]
 }
-scorer = make_scorer(roc_auc_score, needs_threshold=True)
+scorer = make_scorer(roc_auc_score, needs_threshold = True)
 
 gs = GridSearchCV(
-    estimator=IsolationForest(random_state=42),
-    param_grid=param_grid,
-    scoring=scorer,
-    cv=ps,
-    n_jobs=-1,
-    verbose=1
+    estimator = IsolationForest(random_state = 42),
+    param_grid = param_grid,
+    scoring = scorer,
+    cv = ps,
+    n_jobs = -1,
+    verbose = 1
 )
 gs.fit(X_hyper, y_hyper)
 
 
 best = gs.best_params_
 final_model = IsolationForest(
-    n_estimators=  best['n_estimators'],
-    max_samples=   best['max_samples'],
-    contamination= best['contamination'],
-    random_state=  42
+    n_estimators =  best['n_estimators'],
+    max_samples =   best['max_samples'],
+    contamination = best['contamination'],
+    random_state =  42
 )
 final_model.fit(X_train_scaled)
 
